@@ -13,14 +13,14 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>([
     { role: "bot", text: "안녕하세요. 무엇을 도와드릴까요?" },
   ]);
+const sendMessage = async () => {
+  const text = input.trim();
+  if (!text) return;
 
-  const sendMessage = async () => {
-    const text = input.trim();
-    if (!text) return;
+  setMessages((prev) => [...prev, { role: "user", text }]);
+  setInput("");
 
-    setMessages((prev) => [...prev, { role: "user", text }]);
-    setInput("");
-
+  try {
     const res = await fetch("/api/send", {
       method: "POST",
       headers: {
@@ -33,10 +33,15 @@ export default function Home() {
 
     setMessages((prev) => [
       ...prev,
-      { role: "bot", text: data.answer ?? "답변 생성 실패" },
+      { role: "bot", text: data.answer ?? "답변이 없습니다." },
     ]);
-  };
-
+  } catch (error) {
+    setMessages((prev) => [
+      ...prev,
+      { role: "bot", text: "API 호출 중 오류가 발생했습니다." },
+    ]);
+  }
+};
   return (
     <main className="page">
       <section className="hero">
