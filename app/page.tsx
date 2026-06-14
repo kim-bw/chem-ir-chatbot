@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import "./globals.css";
 
 type Message = {
   role: "user" | "bot";
@@ -15,16 +14,27 @@ export default function Home() {
     { role: "bot", text: "안녕하세요. 무엇을 도와드릴까요?" },
   ]);
 
-  const sendMessage = () => {
-    if (!input.trim()) return;
+  const sendMessage = async () => {
+    const text = input.trim();
+    if (!text) return;
+
+    setMessages((prev) => [...prev, { role: "user", text }]);
+    setInput("");
+
+    const res = await fetch("/api/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: text }),
+    });
+
+    const data = await res.json();
 
     setMessages((prev) => [
       ...prev,
-      { role: "user", text: input },
-      { role: "bot", text: "아직 GPT 연결 전입니다." },
+      { role: "bot", text: data.answer ?? "답변 생성 실패" },
     ]);
-
-    setInput("");
   };
 
   return (
