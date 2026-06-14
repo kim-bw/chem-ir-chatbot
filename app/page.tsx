@@ -18,7 +18,11 @@ export default function Home() {
     const text = input.trim();
     if (!text) return;
 
-    setMessages((prev) => [...prev, { role: "user", text }]);
+    setMessages((prev) => [
+      ...prev,
+      { role: "user", text },
+      { role: "bot", text: "생각 중..." },
+    ]);
     setInput("");
 
     try {
@@ -33,13 +37,13 @@ export default function Home() {
       const data = await res.json();
 
       setMessages((prev) => [
-        ...prev,
+        ...prev.slice(0, -1),
         { role: "bot", text: data.answer ?? "답변이 없습니다." },
       ]);
     } catch {
       setMessages((prev) => [
-        ...prev,
-        { role: "bot", text: "API 호출 중 오류가 발생했습니다." },
+        ...prev.slice(0, -1),
+        { role: "bot", text: "API 호출 오류입니다." },
       ]);
     }
   };
@@ -74,7 +78,9 @@ export default function Home() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="메시지를 입력하세요"
               onKeyDown={(e) => {
-                if (e.key === "Enter") sendMessage();
+                if (e.key === "Enter") {
+                  sendMessage();
+                }
               }}
             />
             <button type="button" onClick={sendMessage}>
@@ -84,7 +90,11 @@ export default function Home() {
         </div>
       )}
 
-      <button type="button" className="chatButton" onClick={() => setIsOpen(true)}>
+      <button
+        type="button"
+        className="chatButton"
+        onClick={() => setIsOpen(true)}
+      >
         💬
       </button>
     </main>
