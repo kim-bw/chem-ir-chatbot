@@ -13,35 +13,37 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>([
     { role: "bot", text: "안녕하세요. 무엇을 도와드릴까요?" },
   ]);
-const sendMessage = async () => {
-  const text = input.trim();
-  if (!text) return;
 
-  setMessages((prev) => [...prev, { role: "user", text }]);
-  setInput("");
+  const sendMessage = async () => {
+    const text = input.trim();
+    if (!text) return;
 
-  try {
-    const res = await fetch("/api/send", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message: text }),
-    });
+    setMessages((prev) => [...prev, { role: "user", text }]);
+    setInput("");
 
-    const data = await res.json();
+    try {
+      const res = await fetch("/api/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: text }),
+      });
 
-    setMessages((prev) => [
-      ...prev,
-      { role: "bot", text: data.answer ?? "답변이 없습니다." },
-    ]);
-  } catch (error) {
-    setMessages((prev) => [
-      ...prev,
-      { role: "bot", text: "API 호출 중 오류가 발생했습니다." },
-    ]);
-  }
-};
+      const data = await res.json();
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "bot", text: data.answer ?? "답변이 없습니다." },
+      ]);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { role: "bot", text: "API 호출 중 오류가 발생했습니다." },
+      ]);
+    }
+  };
+
   return (
     <main className="page">
       <section className="hero">
@@ -53,7 +55,9 @@ const sendMessage = async () => {
         <div className="chatWindow">
           <div className="chatHeader">
             <span>AI 챗봇</span>
-            <button onClick={() => setIsOpen(false)}>×</button>
+            <button type="button" onClick={() => setIsOpen(false)}>
+              ×
+            </button>
           </div>
 
           <div className="chatBody">
@@ -73,12 +77,14 @@ const sendMessage = async () => {
                 if (e.key === "Enter") sendMessage();
               }}
             />
-            <button onClick={sendMessage}>전송</button>
+            <button type="button" onClick={sendMessage}>
+              전송
+            </button>
           </div>
         </div>
       )}
 
-      <button className="chatButton" onClick={() => setIsOpen(true)}>
+      <button type="button" className="chatButton" onClick={() => setIsOpen(true)}>
         💬
       </button>
     </main>
