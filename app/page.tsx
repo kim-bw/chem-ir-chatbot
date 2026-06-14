@@ -51,7 +51,7 @@ export default function Home() {
   return (
     <main className="page">
       <section className="hero">
-        <h1>Dummy Site</h1>
+        <h1>Dummy Site Test</h1>
         <p>Vercel + GitHub + Next.js로 만든 샘플 홈페이지입니다.</p>
       </section>
 
