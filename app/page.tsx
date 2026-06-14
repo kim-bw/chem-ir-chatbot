@@ -1,0 +1,71 @@
+"use client";
+
+import { useState } from "react";
+import "./globals.css";
+
+type Message = {
+  role: "user" | "bot";
+  text: string;
+};
+
+export default function Home() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<Message[]>([
+    { role: "bot", text: "안녕하세요. 무엇을 도와드릴까요?" },
+  ]);
+
+  const sendMessage = () => {
+    if (!input.trim()) return;
+
+    setMessages((prev) => [
+      ...prev,
+      { role: "user", text: input },
+      { role: "bot", text: "아직 GPT 연결 전입니다." },
+    ]);
+
+    setInput("");
+  };
+
+  return (
+    <main className="page">
+      <section className="hero">
+        <h1>Dummy Site</h1>
+        <p>Vercel + GitHub + Next.js로 만든 샘플 홈페이지입니다.</p>
+      </section>
+
+      {isOpen && (
+        <div className="chatWindow">
+          <div className="chatHeader">
+            <span>AI 챗봇</span>
+            <button onClick={() => setIsOpen(false)}>×</button>
+          </div>
+
+          <div className="chatBody">
+            {messages.map((msg, index) => (
+              <div key={index} className={`message ${msg.role}`}>
+                {msg.text}
+              </div>
+            ))}
+          </div>
+
+          <div className="chatInputArea">
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="메시지를 입력하세요"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") sendMessage();
+              }}
+            />
+            <button onClick={sendMessage}>전송</button>
+          </div>
+        </div>
+      )}
+
+      <button className="chatButton" onClick={() => setIsOpen(true)}>
+        💬
+      </button>
+    </main>
+  );
+}
